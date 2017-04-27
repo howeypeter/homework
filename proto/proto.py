@@ -80,9 +80,9 @@ def output_range_decimal(begin,end,list):
     chrctr = intOfOutput.replace(" ", "")
   return int(intOfOutput, 16)
 
-def parse_transactions(list):
+def parse_transactions(list,numRecords):
   list_of_transactions = []
-  while len(list) > 40:
+  for x in range(0,numRecords):
     #type 0 - debit 1 - credit 2 - autostart 3- autostop
     transActType = output_range_decimal(0,1,list)
     transActTime = output_range_decimal(1,5,list)
@@ -135,7 +135,9 @@ def main():
         print "Version: " + str(output_range_decimal(4,5,L))
         print "Number of Records: " + str(output_range_decimal(5,9,L))
         return 0
-    transactions = parse_transactions(L[9::])
+    numRecords = int(output_range_decimal(5,9,L))
+
+    transactions = parse_transactions(L[9::],numRecords)
     if options.number == True:
         if options.recordType < 4:
             print "Total Transactions of type " + str(options.recordType) + ": "
@@ -159,7 +161,7 @@ def main():
                 balance = balance + (i[3] * -1)
             if i[0] == 1:
                 balance = balance + i[3]
-        print "Customer " + str(options.customer) + " balance: " + str(balance)
+        print "Customer " + str(options.customer) + " balance: $" + str(balance)
   except:
     deadlinehandler(2,3)
   return 0

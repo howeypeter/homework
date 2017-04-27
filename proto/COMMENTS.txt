@@ -1,0 +1,38 @@
+Comments on proto.py
+python script to parse a binary file in MPS7 format
+
+Usage:
+
+Get the total amount in dollars of debits:
+  ./proto.py -T 0 -A
+Get total amount in dollars of credits:
+  ./proto.py -T 1 -A
+Get number of autopays started:
+  ./proto.py -T 2 -N
+Get number of autopays ended:
+  ./proto.py -T 3 -N
+Get the balance of user ID 2456938384156277127?
+  ./proto.py -C 2456938384156277127
+Get the headers:
+  ./proto.py -H
+Get help:
+  ./proto.py -h
+
+Last digit will be the exit code of the program (0) or (1)
+
+Options:
+  -h, --help            show this help message and exit
+  -F FILENAME, --file=FILENAME
+                        Specify the name of the binary file. Default is
+                        txnlog.dat
+  -T RECORDTYPE, --type=RECORDTYPE
+                        Type of transaction: 0 Debit 1 Credit 2 StartAutoPay 3
+                        StopAutoPay. Usage: -T 0 (Debit)
+  -A, --add             Value of total (sum) in dollars, which are Type Debit
+                        or Credit
+  -N, --number          Count the number of
+                        Debit/Credit/StartAutoPay/StopAutoPay transactions
+                        (requires -T type)
+  -C CUSTOMER, --customer=CUSTOMER
+                        Get balance of a specific customer
+  -H, --headers         Output the headers from the file
