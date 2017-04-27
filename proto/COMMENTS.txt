@@ -18,7 +18,17 @@ Get the headers:
 Get help:
   ./proto.py -h
 
-Last digit will be the exit code of the program (0) or (1)
+** Last digit will be the exit code of the program (0) or (1)
+
+Requires:
+  Python 2.7
+  struct
+  binascii
+  optparse
+if you don't have the libraries (you should):
+    pip install binascii
+    pip install optparse
+
 
 Options:
   -h, --help            show this help message and exit

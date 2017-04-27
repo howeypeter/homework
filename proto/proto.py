@@ -63,24 +63,9 @@ def parse_file(filename):
       parsedList.append(byte)
   return parsedList
 
-def output_range_ascii(begin,end,list):
-  stringOfOutput = ''
-  for x in range(begin,end):
-    chrctr =  list[x]
-    chrctr =  binascii.unhexlify(chrctr)
-    stringOfOutput = stringOfOutput + str(chrctr)
-  return stringOfOutput
-
-def output_range_decimal(begin,end,list):
-  #enter list of hex and concatenate and convert to decimal
-  intOfOutput = ''
-  for x in range(begin,end):
-    chrctr =  str(list[x])
-    intOfOutput = str(intOfOutput + chrctr)
-    chrctr = intOfOutput.replace(" ", "")
-  return int(intOfOutput, 16)
-
 def parse_transactions(list,numRecords):
+  # go through the records and output a list of tuples in format:
+  # (Type,Unix Timestamp,CustID,[Dollar amount])
   list_of_transactions = []
   for x in range(0,numRecords):
     #type 0 - debit 1 - credit 2 - autostart 3- autostop
@@ -89,7 +74,6 @@ def parse_transactions(list,numRecords):
     custID = output_range_decimal(5,13,list)
     del list[0:13]
     if transActType < 2:
-      #transActDollars = output_range_decimal(0,9,list)
       transActDollars = output_range_decimal(0,9,list)
       del list[0:8]
     else:
@@ -98,14 +82,38 @@ def parse_transactions(list,numRecords):
     list_of_transactions.append(transAct)
   return list_of_transactions
 
-def find_cust(list,custNo):
+def output_range_ascii(begin,end,list):
+  #convert the hex chars in list and range, to ascii.
+  stringOfOutput = ''
+  for x in range(begin,end):
+    chrctr =  list[x]
+    chrctr =  binascii.unhexlify(chrctr)
+    stringOfOutput = stringOfOutput + str(chrctr)
+  return stringOfOutput
+
+def output_range_decimal(begin,end,list):
+  #enter list and range of hex chars, concatenate, and convert to decimal
+  intOfOutput = ''
+  for x in range(begin,end):
+    chrctr =  str(list[x])
+    intOfOutput = str(intOfOutput + chrctr)
+    chrctr = intOfOutput.replace(" ", "")
+  return int(intOfOutput, 16)
+
+def cust_balance(list,custNo):
+  # get the customer's balance
   newList = []
+  balance = 0
   for i in range(0, len(list)):
     blarg =  list[i]
     if blarg[2] == custNo:
-
       newList.append(blarg)
-  return newList
+  for i in newList:
+    if i[0] == 0:
+      balance = balance + (i[3] * -1)
+    if i[0] == 1:
+      balance = balance + i[3]
+  return balance
 
 def transaction_types(list,idNum):
   #how many of transaction ID 0,1,2,3 ?
@@ -154,14 +162,7 @@ def main():
         else:
             print "this will only calculate Debit (0) or Credit (1) transactions"
     if options.customer > 0:
-        balance = 0
-        trans = find_cust(transactions,options.customer)
-        for i in trans:
-            if i[0] == 0:
-                balance = balance + (i[3] * -1)
-            if i[0] == 1:
-                balance = balance + i[3]
-        print "Customer " + str(options.customer) + " balance: $" + str(balance)
+        print "Customer " + str(options.customer) + " balance: $" + str(cust_balance(transactions,options.customer))
   except:
     deadlinehandler(2,3)
   return 0
